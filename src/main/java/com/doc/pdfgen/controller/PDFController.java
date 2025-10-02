@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/pdf")
 public class PDFController {
     private static final Logger logger = LoggerFactory.getLogger(PDFController.class);
 

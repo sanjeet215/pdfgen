@@ -1,7 +1,10 @@
 package com.doc.pdfgen.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class PdfSplitOptionsDTO {
 
     /**
@@ -64,91 +67,91 @@ public class PdfSplitOptionsDTO {
      */
     private boolean mergeAfterSplit;
 
-    public String getPageRanges() {
-        return pageRanges;
-    }
-
-    public void setPageRanges(String pageRanges) {
-        this.pageRanges = pageRanges;
-    }
-
-    public Integer getSplitEveryNPages() {
-        return splitEveryNPages;
-    }
-
-    public void setSplitEveryNPages(Integer splitEveryNPages) {
-        this.splitEveryNPages = splitEveryNPages;
-    }
-
-    public boolean isSplitByBookmark() {
-        return splitByBookmark;
-    }
-
-    public void setSplitByBookmark(boolean splitByBookmark) {
-        this.splitByBookmark = splitByBookmark;
-    }
-
-    public boolean isExtractEveryPage() {
-        return extractEveryPage;
-    }
-
-    public void setExtractEveryPage(boolean extractEveryPage) {
-        this.extractEveryPage = extractEveryPage;
-    }
-
-    public Double getMaxFileSizeMB() {
-        return maxFileSizeMB;
-    }
-
-    public void setMaxFileSizeMB(Double maxFileSizeMB) {
-        this.maxFileSizeMB = maxFileSizeMB;
-    }
-
-    public String getOutputFilePrefix() {
-        return outputFilePrefix;
-    }
-
-    public void setOutputFilePrefix(String outputFilePrefix) {
-        this.outputFilePrefix = outputFilePrefix;
-    }
-
-    public String getOutputFileSuffix() {
-        return outputFileSuffix;
-    }
-
-    public void setOutputFileSuffix(String outputFileSuffix) {
-        this.outputFileSuffix = outputFileSuffix;
-    }
-
-    public String getOutputFileNumberingStyle() {
-        return outputFileNumberingStyle;
-    }
-
-    public void setOutputFileNumberingStyle(String outputFileNumberingStyle) {
-        this.outputFileNumberingStyle = outputFileNumberingStyle;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<String> getPageSelectionList() {
-        return pageSelectionList;
-    }
-
-    public void setPageSelectionList(List<String> pageSelectionList) {
-        this.pageSelectionList = pageSelectionList;
-    }
-
-    public boolean isMergeAfterSplit() {
-        return mergeAfterSplit;
-    }
-
-    public void setMergeAfterSplit(boolean mergeAfterSplit) {
-        this.mergeAfterSplit = mergeAfterSplit;
-    }
+//    public String getPageRanges() {
+//        return pageRanges;
+//    }
+//
+//    public void setPageRanges(String pageRanges) {
+//        this.pageRanges = pageRanges;
+//    }
+//
+//    public Integer getSplitEveryNPages() {
+//        return splitEveryNPages;
+//    }
+//
+//    public void setSplitEveryNPages(Integer splitEveryNPages) {
+//        this.splitEveryNPages = splitEveryNPages;
+//    }
+//
+//    public boolean isSplitByBookmark() {
+//        return splitByBookmark;
+//    }
+//
+//    public void setSplitByBookmark(boolean splitByBookmark) {
+//        this.splitByBookmark = splitByBookmark;
+//    }
+//
+//    public boolean isExtractEveryPage() {
+//        return extractEveryPage;
+//    }
+//
+//    public void setExtractEveryPage(boolean extractEveryPage) {
+//        this.extractEveryPage = extractEveryPage;
+//    }
+//
+//    public Double getMaxFileSizeMB() {
+//        return maxFileSizeMB;
+//    }
+//
+//    public void setMaxFileSizeMB(Double maxFileSizeMB) {
+//        this.maxFileSizeMB = maxFileSizeMB;
+//    }
+//
+//    public String getOutputFilePrefix() {
+//        return outputFilePrefix;
+//    }
+//
+//    public void setOutputFilePrefix(String outputFilePrefix) {
+//        this.outputFilePrefix = outputFilePrefix;
+//    }
+//
+//    public String getOutputFileSuffix() {
+//        return outputFileSuffix;
+//    }
+//
+//    public void setOutputFileSuffix(String outputFileSuffix) {
+//        this.outputFileSuffix = outputFileSuffix;
+//    }
+//
+//    public String getOutputFileNumberingStyle() {
+//        return outputFileNumberingStyle;
+//    }
+//
+//    public void setOutputFileNumberingStyle(String outputFileNumberingStyle) {
+//        this.outputFileNumberingStyle = outputFileNumberingStyle;
+//    }
+//
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
+//
+//    public List<String> getPageSelectionList() {
+//        return pageSelectionList;
+//    }
+//
+//    public void setPageSelectionList(List<String> pageSelectionList) {
+//        this.pageSelectionList = pageSelectionList;
+//    }
+//
+//    public boolean isMergeAfterSplit() {
+//        return mergeAfterSplit;
+//    }
+//
+//    public void setMergeAfterSplit(boolean mergeAfterSplit) {
+//        this.mergeAfterSplit = mergeAfterSplit;
+//    }
 }
