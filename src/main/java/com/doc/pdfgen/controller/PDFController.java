@@ -1,7 +1,9 @@
 package com.doc.pdfgen.controller;
 
 import com.doc.baseservice.Document;
+import com.doc.pdfgen.dto.MetaData;
 import com.doc.pdfgen.dto.PDFOperationRequestDTO;
+import com.doc.pdfgen.pdf.service.MetadataService;
 import com.doc.pdfgen.service.PDFPipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +25,12 @@ public class PDFController {
 
     private final PDFPipeline PDFPipeline;
 
+    private final MetadataService metadataService;
+
     @Autowired
-    public PDFController(PDFPipeline PDFPipeline) {
+    public PDFController(PDFPipeline PDFPipeline,MetadataService metadataService) {
         this.PDFPipeline = PDFPipeline;
+        this.metadataService = metadataService;
     }
 
     @PostMapping("/compress")
@@ -51,8 +56,20 @@ public class PDFController {
         return ResponseEntity.status(HttpStatus.OK).body(document);
     }
 
+    @PostMapping("/extract")
+    public ResponseEntity<MetaData> extractMetadata(@RequestParam("file") MultipartFile file) {
+        try {
+            MetaData metadata = metadataService.extractFileMetadata(file);
+            return ResponseEntity.ok(metadata);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 //    @PostMapping("/merge")
-//    public ResponseEntity<Document> mergePdf(@RequestParam("files") MultipartFile[] multipartFiles) throws IOException {}
+//    public ResponseEntity<Document> mergePdf(@RequestParam("files") MultipartFile[] multipartFiles) throws IOException {
+//
+//    }
 
     @PostMapping("/test")
     public ResponseEntity<Document> test() throws IOException {
