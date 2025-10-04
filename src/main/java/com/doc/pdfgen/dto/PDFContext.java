@@ -7,10 +7,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class PDFContext {
     private MultipartFile inputFile;
     private byte[] pdfBytes; // holds intermediate/final PDF in memory
-    PDFOperationRequestDTO pdfOperationRequestDTO;
 
-    public PDFContext(MultipartFile inputFile, PDFOperationRequestDTO pdfOperationRequestDTO) {
+    RequestTypeDTO requestTypeDTO;
+
+    public PDFContext(MultipartFile inputFile, RequestTypeDTO requestTypeDTO) {
         this.inputFile = inputFile;
-        this.pdfOperationRequestDTO = pdfOperationRequestDTO;
+        this.requestTypeDTO = requestTypeDTO;
     }
 }

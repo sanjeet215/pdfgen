@@ -1,8 +1,9 @@
 package com.doc.pdfgen.pdf.service;
 
 import com.doc.pdfgen.common.CommonUtils;
+import com.doc.pdfgen.dto.CompressPDFDTO;
 import com.doc.pdfgen.dto.PDFContext;
-import com.doc.pdfgen.dto.PDFOperationRequestDTO;
+import com.doc.pdfgen.dto.RequestTypeDTO;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -44,7 +45,7 @@ public class PDFCompressService implements PDFProcessService {
     public void processPDF(PDFContext pdfContext) {
         logger.debug(">>compressPdf");
 
-        if (!pdfContext.getPdfOperationRequestDTO().isCompressionRequired()) {
+        if (!pdfContext.getRequestTypeDTO().isCompressionRequired()) {
             logger.info("Compression not required, skipping compression step.");
             return;
         }
@@ -58,7 +59,7 @@ public class PDFCompressService implements PDFProcessService {
     }
 
     private void compressPDF(PDFContext pdfContext) throws IOException {
-        PDFOperationRequestDTO requestDTO = pdfContext.getPdfOperationRequestDTO();
+        CompressPDFDTO requestDTO = pdfContext.getRequestTypeDTO().getCompressPDFDTO();
         byte[] pdfBytes = pdfContext.getPdfBytes();
 
         float quality = (float) requestDTO.getCompressionQuality() / 100;

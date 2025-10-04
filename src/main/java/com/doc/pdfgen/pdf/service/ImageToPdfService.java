@@ -28,11 +28,14 @@ public class ImageToPdfService implements PDFProcessService {
 
     @Override
     public void processPDF(PDFContext context) {
+        logger.debug(">>imageToPdf");
+        if(!context.getRequestTypeDTO().isImageToPdf()) return;
+
         try {
             byte[] imageBytes = context.getInputFile().getBytes();
 
             try (PDDocument pdDocument = new PDDocument()) {
-                PDRectangle pdRectangle = CommonUtils.getPDRectangle(context.getPdfOperationRequestDTO().getPageSize());
+                PDRectangle pdRectangle = CommonUtils.getPDRectangle(context.getRequestTypeDTO().getImageToPdfDTO().getPageSize());
                 PDPage page = new PDPage(pdRectangle);
                 pdDocument.addPage(page);
 
@@ -57,7 +60,7 @@ public class ImageToPdfService implements PDFProcessService {
                     float yOffset = (pageHeight - (imageHeight * scale)) / 2;
 
                     try (PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page)) {
-                        switch (context.getPdfOperationRequestDTO().getBorderType()) {
+                        switch (context.getRequestTypeDTO().getImageToPdfDTO().getBorderType()) {
                             case THIN ->
                                     drawBorder(contentStream, xOffset, yOffset, imageWidth * scale, imageHeight * scale, 5);
                             case THICK ->
@@ -68,9 +71,9 @@ public class ImageToPdfService implements PDFProcessService {
                         contentStream.drawImage(pdImageXObject, xOffset, yOffset, imageWidth * scale, imageHeight * scale);
                     }
 
-                    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                        pdDocument.save(baos);
-                        context.setPdfBytes(baos.toByteArray());
+                    try (ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream()) {
+                        pdDocument.save(pdfOutputStream);
+                        context.setPdfBytes(pdfOutputStream.toByteArray());
                     }
                 }
             }

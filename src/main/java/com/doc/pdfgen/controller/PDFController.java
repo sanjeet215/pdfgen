@@ -2,7 +2,7 @@ package com.doc.pdfgen.controller;
 
 import com.doc.baseservice.Document;
 import com.doc.pdfgen.dto.MetaData;
-import com.doc.pdfgen.dto.PDFOperationRequestDTO;
+import com.doc.pdfgen.dto.RequestTypeDTO;
 import com.doc.pdfgen.pdf.service.MetadataService;
 import com.doc.pdfgen.service.PDFPipeline;
 import org.slf4j.Logger;
@@ -23,21 +23,20 @@ import java.util.List;
 public class PDFController {
     private static final Logger logger = LoggerFactory.getLogger(PDFController.class);
 
-    private final PDFPipeline PDFPipeline;
+    private final PDFPipeline pdfPipeline;
 
     private final MetadataService metadataService;
 
     @Autowired
-    public PDFController(PDFPipeline PDFPipeline,MetadataService metadataService) {
-        this.PDFPipeline = PDFPipeline;
+    public PDFController(PDFPipeline pdfPipeline, MetadataService metadataService) {
+        this.pdfPipeline = pdfPipeline;
         this.metadataService = metadataService;
     }
 
-    @PostMapping("/compress")
-    public ResponseEntity<byte[]> compressPdf(@RequestPart("file") MultipartFile multipartFile, @RequestPart PDFOperationRequestDTO pdfOperationRequestDTO) throws IOException {
-        logger.debug(">>compressPdf");
-        logger.debug("<<compressPdf");
-        byte[] pdfBytes = PDFPipeline.execute(multipartFile,pdfOperationRequestDTO);
+    @PostMapping("/imageToPdf")
+    public ResponseEntity<byte[]> imageToPdf(@RequestPart("files") List<MultipartFile> multipartFileList, @RequestPart RequestTypeDTO requestTypeDTO) throws IOException {
+        logger.debug(">>imageToPdf");
+        byte[] pdfBytes =  pdfPipeline.execute(multipartFileList, requestTypeDTO);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"output.pdf\"")
                 .contentType(MediaType.APPLICATION_PDF)
@@ -45,16 +44,28 @@ public class PDFController {
     }
 
 
-    @PostMapping("/split")
-    public ResponseEntity<Document> splitPdf(@RequestParam("file") MultipartFile multipartFile,
-                                             @RequestParam(value = "ranges", required = false) List<String> ranges) throws IOException {
-
-        logger.debug(">> SplitPdf fileName: {},ranges: {}",multipartFile.getOriginalFilename(),ranges);
-        //pdfSplitterService.splitPdfByRange(multipartFile, AppConstants.SPLITTED_OUTPUT_DIR,ranges);
-        Document document = new Document();
-        document.put("data", "test");
-        return ResponseEntity.status(HttpStatus.OK).body(document);
-    }
+//    @PostMapping("/compress")
+//    public ResponseEntity<byte[]> compressPdf(@RequestPart("file") MultipartFile multipartFile, @RequestPart RequestTypeDTO requestTypeDTO) throws IOException {
+//        logger.debug(">>compressPdf");
+//        logger.debug("<<compressPdf");
+//        byte[] pdfBytes = PDFPipeline.execute(multipartFile, requestTypeDTO);
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"output.pdf\"")
+//                .contentType(MediaType.APPLICATION_PDF)
+//                .body(pdfBytes);
+//    }
+//
+//
+//    @PostMapping("/split")
+//    public ResponseEntity<Document> splitPdf(@RequestParam("file") MultipartFile multipartFile,
+//                                             @RequestParam(value = "ranges", required = false) List<String> ranges) throws IOException {
+//
+//        logger.debug(">> SplitPdf fileName: {},ranges: {}",multipartFile.getOriginalFilename(),ranges);
+//        //pdfSplitterService.splitPdfByRange(multipartFile, AppConstants.SPLITTED_OUTPUT_DIR,ranges);
+//        Document document = new Document();
+//        document.put("data", "test");
+//        return ResponseEntity.status(HttpStatus.OK).body(document);
+//    }
 
     @PostMapping("/extract")
     public ResponseEntity<MetaData> extractMetadata(@RequestParam("file") MultipartFile file) {

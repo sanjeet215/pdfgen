@@ -25,10 +25,10 @@ public class WatermarkPDF implements PDFProcessService {
     @Override
     public void processPDF(PDFContext pdfContext) {
         logger.debug(">>watermarkPdf");
-        if (!pdfContext.getPdfOperationRequestDTO().isWatermarkRequired()) {
+        if (!pdfContext.getRequestTypeDTO().isWatermarkRequired()) {
             return;
         }
-        WaterMarkProp waterMarkProp = pdfContext.getPdfOperationRequestDTO().getWaterMarkProp();
+        WaterMarkProp waterMarkProp = pdfContext.getRequestTypeDTO().getWaterMarkProp();
         if (waterMarkProp != null) {
             watermarkThePdfWithText(pdfContext, waterMarkProp);
         }
