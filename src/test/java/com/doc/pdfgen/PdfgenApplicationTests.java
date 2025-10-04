@@ -2,9 +2,9 @@ package com.doc.pdfgen;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
-class PdfgenApplicationTests {
+class PdfgenApplicationTests extends SpringBaseTest{
 
 	@Test
 	void contextLoads() {
