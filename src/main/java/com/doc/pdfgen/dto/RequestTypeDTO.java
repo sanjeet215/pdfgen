@@ -1,23 +1,48 @@
 package com.doc.pdfgen.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RequestTypeDTO {
-    String fileName;
-    boolean isImageToPdf;
-    boolean isMergePDF;
-    boolean isSplitPDF;
-    boolean isWatermarkPDF;
-    boolean isCompressPDF;
-    boolean isExtractText;
-    boolean compressionRequired;
-    int compressionQuality;
-    boolean watermarkRequired;
+    @JsonProperty("fileName")
+    private String fileName;
+    
+    @JsonProperty("isImageToPdf")
+    private boolean imageToPdf;
+    
+    @JsonProperty("isMergePDF")
+    private boolean mergePDF;
+    
+    @JsonProperty("isSplitPDF")
+    private boolean splitPDF;
+    
+    @JsonProperty("isWatermarkPDF")
+    private boolean watermarkPDF;
+    
+    @JsonProperty("isCompressPDF")
+    private boolean compressPDF;
+    
+    @JsonProperty("isExtractText")
+    private boolean extractText;
+    
+    @JsonProperty("compressionRequired")
+    private boolean compressionRequired;
+    
+    @JsonProperty("compressionQuality")
+    private int compressionQuality;
+    
+    @JsonProperty("watermarkRequired")
+    private boolean watermarkRequired;
 
-    ImageToPdfDTO imageToPdfDTO;
+    @JsonProperty("imageToPdfDTO")
+    private ImageToPdfDTO imageToPdfDTO;
 
-    CompressPDFDTO compressPDFDTO;
+    @JsonProperty("compressPDFDTO")
+    private CompressPDFDTO compressPDFDTO;
 
-    WaterMarkProp waterMarkProp;
+    @JsonProperty("waterMarkProp")
+    private WaterMarkProp waterMarkProp;
 }

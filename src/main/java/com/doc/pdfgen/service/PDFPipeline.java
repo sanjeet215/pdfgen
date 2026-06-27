@@ -44,11 +44,16 @@ public class PDFPipeline {
 
     //Zipping the PDFs in the list
     public byte[] zipPDFs(List<byte[]> pdfBytesList) {
-        return pdfBytesList.stream().reduce(new byte[0], (a, b) -> {
-            byte[] result = new byte[a.length + b.length];
-            System.arraycopy(a, 0, result, 0, a.length);
-            System.arraycopy(b, 0, result, a.length, b.length);
-            return result;
-        });
+        if (pdfBytesList == null || pdfBytesList.isEmpty()) {
+            return new byte[0];
+        }
+        return pdfBytesList.stream()
+                .filter(bytes -> bytes != null && bytes.length > 0) // Skip null or empty byte arrays
+                .reduce(new byte[0], (a, b) -> {
+                    byte[] result = new byte[a.length + b.length];
+                    System.arraycopy(a, 0, result, 0, a.length);
+                    System.arraycopy(b, 0, result, a.length, b.length);
+                    return result;
+                });
     }
 }

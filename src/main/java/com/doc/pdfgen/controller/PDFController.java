@@ -33,9 +33,17 @@ public class PDFController {
         this.metadataService = metadataService;
     }
 
-    @PostMapping("/imageToPdf")
-    public ResponseEntity<byte[]> imageToPdf(@RequestPart("files") List<MultipartFile> multipartFileList, @RequestPart RequestTypeDTO requestTypeDTO) throws IOException {
+    @PostMapping(value = "/imageToPdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<byte[]> imageToPdf(
+            @RequestPart("files") List<MultipartFile> multipartFileList,
+            @RequestPart(value = "requestTypeDTO", required = true) RequestTypeDTO requestTypeDTO) throws IOException {
+        if (requestTypeDTO == null) {
+            throw new IllegalArgumentException("Request type DTO cannot be null");
+        }
         logger.debug(">>imageToPdf");
+        requestTypeDTO.setCompressionRequired(true);
+        requestTypeDTO.setCompressionQuality(50);
+        logger.info("--imageToPdf(): requestTypeDTO: {}",requestTypeDTO);
         byte[] pdfBytes =  pdfPipeline.execute(multipartFileList, requestTypeDTO);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"output.pdf\"")
