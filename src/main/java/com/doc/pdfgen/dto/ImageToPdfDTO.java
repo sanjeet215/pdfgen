@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class ImageToPdfDTO {
     private String fileName;
-    BorderType borderType;
-    String pageSize;
+    private BorderType borderType;
+    private String pageSize;
+    private String orientation;
+    private boolean mergeAll;
 }

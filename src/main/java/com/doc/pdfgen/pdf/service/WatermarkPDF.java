@@ -47,7 +47,7 @@ public class WatermarkPDF implements PDFProcessService {
     }
 
     private static void writeWaterMarkTextOnPDF(PDFContext pdfContext, WaterMarkProp waterMarkProp) throws IOException {
-        byte[] byteArray = pdfContext.getInputFile().getBytes();
+        byte[] byteArray = pdfContext.getPdfBytes();
         PDDocument document = PDDocument.load(byteArray);
 
         String watermarkText = waterMarkProp.getWatermarkText() != null ? waterMarkProp.getWatermarkText() : "Default Watermark";

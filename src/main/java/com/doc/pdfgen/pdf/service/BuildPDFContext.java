@@ -4,7 +4,9 @@ import com.doc.pdfgen.dto.PDFContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
+@Component
 @Order(1)
 public class BuildPDFContext implements PDFProcessService {
 
@@ -17,7 +19,7 @@ public class BuildPDFContext implements PDFProcessService {
             byte[] byteArray = pdfContext.getInputFile().getBytes();
             pdfContext.setPdfBytes(byteArray);
         } catch (Exception exception) {
-            // will store the file incase of any exception // after S3 integration
+            throw new IllegalStateException("Unable to read uploaded file", exception);
         }
     }
 }

@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Component
-@Order(3)
+@Order(2)
 public class ImageToPdfService implements PDFProcessService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageToPdfService.class);
@@ -35,7 +35,9 @@ public class ImageToPdfService implements PDFProcessService {
             byte[] imageBytes = context.getInputFile().getBytes();
 
             try (PDDocument pdDocument = new PDDocument()) {
-                PDRectangle pdRectangle = CommonUtils.getPDRectangle(context.getRequestTypeDTO().getImageToPdfDTO().getPageSize());
+                PDRectangle pdRectangle = CommonUtils.getPDRectangle(
+                        context.getRequestTypeDTO().getImageToPdfDTO().getPageSize(),
+                        context.getRequestTypeDTO().getImageToPdfDTO().getOrientation());
                 PDPage page = new PDPage(pdRectangle);
                 pdDocument.addPage(page);
 
@@ -51,9 +53,12 @@ public class ImageToPdfService implements PDFProcessService {
                     float pageHeight = page.getMediaBox().getHeight();
                     float imageWidth = bufferedImage.getWidth();
                     float imageHeight = bufferedImage.getHeight();
+                    boolean includeMargins = context.getRequestTypeDTO().getImageToPdfDTO().getBorderType()
+                            == com.doc.pdfgen.dto.BorderType.INCLUDE_MARGINS;
+                    float margin = includeMargins ? 36 : 0;
 
-                    float scaleX = pageWidth / imageWidth;
-                    float scaleY = pageHeight / imageHeight;
+                    float scaleX = (pageWidth - (2 * margin)) / imageWidth;
+                    float scaleY = (pageHeight - (2 * margin)) / imageHeight;
                     float scale = Math.min(scaleX, scaleY);
 
                     float xOffset = (pageWidth - (imageWidth * scale)) / 2;
@@ -65,7 +70,13 @@ public class ImageToPdfService implements PDFProcessService {
                                     drawBorder(contentStream, xOffset, yOffset, imageWidth * scale, imageHeight * scale, 5);
                             case THICK ->
                                     drawBorder(contentStream, xOffset, yOffset, imageWidth * scale, imageHeight * scale, 25);
-                            case NO_BORDER -> { /* do nothing */ }
+                            case MEDIUM ->
+                                    drawBorder(contentStream, xOffset, yOffset, imageWidth * scale, imageHeight * scale, 12);
+                            case DOTTED -> {
+                                contentStream.setLineDashPattern(new float[]{3, 3}, 0);
+                                drawBorder(contentStream, xOffset, yOffset, imageWidth * scale, imageHeight * scale, 2);
+                            }
+                            case INCLUDE_MARGINS, NO_BORDER -> { /* do nothing */ }
                         }
 
                         contentStream.drawImage(pdImageXObject, xOffset, yOffset, imageWidth * scale, imageHeight * scale);

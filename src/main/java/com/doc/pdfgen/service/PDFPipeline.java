@@ -4,6 +4,8 @@ import com.doc.pdfgen.dto.PDFContext;
 import com.doc.pdfgen.dto.RequestTypeDTO;
 import com.doc.pdfgen.pdf.service.PDFProcessService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 @Component
 public class PDFPipeline {
@@ -25,12 +30,23 @@ public class PDFPipeline {
     }
 
     public byte[] execute(List<MultipartFile> inputFiles, RequestTypeDTO requestTypeDTO) {
+        if (inputFiles == null || inputFiles.isEmpty()) {
+            throw new IllegalArgumentException("At least one input file is required");
+        }
+        if (requestTypeDTO == null) {
+            throw new IllegalArgumentException("Request options are required");
+        }
         List<byte[]> pdfBytesList = new ArrayList<>();
         for (MultipartFile inputFile : inputFiles) {
             pdfBytesList.add(executePipeLine(inputFile, requestTypeDTO));
         }
         if (CollectionUtils.size(inputFiles) > 1) {
-            return zipPDFs(pdfBytesList);
+            if (requestTypeDTO.getImageToPdfDTO() == null
+                    || !requestTypeDTO.getImageToPdfDTO().isMergeAll()) {
+                throw new IllegalArgumentException(
+                        "Multiple files require the merge-all option for a single PDF response");
+            }
+            return mergePDFs(pdfBytesList);
         } else {
             return pdfBytesList.get(0);
         }
@@ -42,18 +58,23 @@ public class PDFPipeline {
         return pdfContext.getPdfBytes();
     }
 
-    //Zipping the PDFs in the list
-    public byte[] zipPDFs(List<byte[]> pdfBytesList) {
+    public byte[] mergePDFs(List<byte[]> pdfBytesList) {
         if (pdfBytesList == null || pdfBytesList.isEmpty()) {
             return new byte[0];
         }
-        return pdfBytesList.stream()
-                .filter(bytes -> bytes != null && bytes.length > 0) // Skip null or empty byte arrays
-                .reduce(new byte[0], (a, b) -> {
-                    byte[] result = new byte[a.length + b.length];
-                    System.arraycopy(a, 0, result, 0, a.length);
-                    System.arraycopy(b, 0, result, a.length, b.length);
-                    return result;
-                });
+        PDFMergerUtility merger = new PDFMergerUtility();
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            for (byte[] pdfBytes : pdfBytesList) {
+                if (pdfBytes == null || pdfBytes.length == 0) {
+                    throw new IllegalStateException("A pipeline stage produced an empty PDF");
+                }
+                merger.addSource(new ByteArrayInputStream(pdfBytes));
+            }
+            merger.setDestinationStream(output);
+            merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+            return output.toByteArray();
+        } catch (IOException exception) {
+            throw new IllegalStateException("Unable to merge generated PDFs", exception);
+        }
     }
 }

@@ -36,7 +36,7 @@ import java.util.Iterator;
  * Text content is preserved as-is while images are compressed.
  */
 @Component
-@Order(2)
+@Order(3)
 public class PDFCompressService implements PDFProcessService {
 
     private static final Logger logger = LoggerFactory.getLogger(PDFCompressService.class);

@@ -41,8 +41,6 @@ public class PDFController {
             throw new IllegalArgumentException("Request type DTO cannot be null");
         }
         logger.debug(">>imageToPdf");
-        requestTypeDTO.setCompressionRequired(true);
-        requestTypeDTO.setCompressionQuality(50);
         logger.info("--imageToPdf(): requestTypeDTO: {}",requestTypeDTO);
         byte[] pdfBytes =  pdfPipeline.execute(multipartFileList, requestTypeDTO);
         return ResponseEntity.ok()

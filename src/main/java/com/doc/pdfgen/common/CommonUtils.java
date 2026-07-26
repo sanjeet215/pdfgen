@@ -6,17 +6,24 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 public final class CommonUtils {
 
     public static PDRectangle getPDRectangle(String pageSize) {
+        return getPDRectangle(pageSize, "portrait");
+    }
+
+    public static PDRectangle getPDRectangle(String pageSize, String orientation) {
         PDRectangle page = PDRectangle.A4;
         if(StringUtils.isNotBlank(pageSize)) {
             if(pageSize.equalsIgnoreCase("A4")) {
-                page =  new PDRectangle(PDRectangle.A4.getHeight(),PDRectangle.A4.getWidth());
+                page = PDRectangle.A4;
             } else if(pageSize.equalsIgnoreCase("A5")) {
-                page =  new PDRectangle(PDRectangle.A5.getHeight(),PDRectangle.A5.getWidth());
+                page = PDRectangle.A5;
             } else if(pageSize.equalsIgnoreCase("LETTER")) {
-                page =  new PDRectangle(PDRectangle.LETTER.getHeight(),PDRectangle.LETTER.getWidth());
+                page = PDRectangle.LETTER;
             } else if (pageSize.equalsIgnoreCase("LEGAL")) {
-                page =  new PDRectangle(PDRectangle.LEGAL.getHeight(),PDRectangle.LEGAL.getWidth());
+                page = PDRectangle.LEGAL;
             }
+        }
+        if ("landscape".equalsIgnoreCase(orientation)) {
+            return new PDRectangle(page.getHeight(), page.getWidth());
         }
         return page;
     }
