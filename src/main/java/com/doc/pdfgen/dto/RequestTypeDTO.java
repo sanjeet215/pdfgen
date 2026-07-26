@@ -27,6 +27,9 @@ public class RequestTypeDTO {
     
     @JsonProperty("isExtractText")
     private boolean extractText;
+
+    @JsonProperty("isPageNumberPDF")
+    private boolean pageNumberPDF;
     
     @JsonProperty("compressionRequired")
     private boolean compressionRequired;
@@ -45,4 +48,7 @@ public class RequestTypeDTO {
 
     @JsonProperty("waterMarkProp")
     private WaterMarkProp waterMarkProp;
+
+    @JsonProperty("pageNumberDTO")
+    private PageNumberDTO pageNumberDTO;
 }

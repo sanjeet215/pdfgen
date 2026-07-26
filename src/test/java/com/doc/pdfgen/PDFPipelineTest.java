@@ -3,10 +3,13 @@ package com.doc.pdfgen;
 import com.doc.pdfgen.dto.BorderType;
 import com.doc.pdfgen.dto.ImageToPdfDTO;
 import com.doc.pdfgen.dto.RequestTypeDTO;
+import com.doc.pdfgen.dto.PageNumberDTO;
 import com.doc.pdfgen.pdf.service.BuildPDFContext;
 import com.doc.pdfgen.pdf.service.ImageToPdfService;
+import com.doc.pdfgen.pdf.service.PageNumberService;
 import com.doc.pdfgen.service.PDFPipeline;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -66,6 +69,27 @@ class PDFPipelineTest {
 
         try (PDDocument document = PDDocument.load(result)) {
             assertEquals(3, document.getNumberOfPages());
+        }
+    }
+
+    @Test
+    void addsSequentialPageNumbersStartingAtConfiguredNumber() throws Exception {
+        PDFPipeline numberingPipeline = new PDFPipeline(
+                List.of(new BuildPDFContext(), new PageNumberService()));
+        PageNumberDTO options = new PageNumberDTO();
+        options.setStartNumber(5);
+        options.setPosition("bottom-center");
+        RequestTypeDTO request = new RequestTypeDTO();
+        request.setPageNumberPDF(true);
+        request.setPageNumberDTO(options);
+
+        byte[] result = numberingPipeline.execute(List.of(pdf("document.pdf", 2)), request);
+
+        try (PDDocument document = PDDocument.load(result)) {
+            assertEquals(2, document.getNumberOfPages());
+            String text = new PDFTextStripper().getText(document);
+            org.junit.jupiter.api.Assertions.assertTrue(text.contains("5"));
+            org.junit.jupiter.api.Assertions.assertTrue(text.contains("6"));
         }
     }
 

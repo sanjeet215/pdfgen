@@ -58,6 +58,20 @@ public class PDFCompressService implements PDFProcessService {
         }
     }
 
+    public byte[] compressBytes(byte[] pdfBytes, CompressPDFDTO options) {
+        RequestTypeDTO request = new RequestTypeDTO();
+        request.setCompressionRequired(true);
+        request.setCompressPDFDTO(options);
+        PDFContext context = new PDFContext(null, request);
+        context.setPdfBytes(pdfBytes);
+        try {
+            compressPDF(context);
+            return context.getPdfBytes();
+        } catch (IOException exception) {
+            throw new IllegalStateException("PDF compression failed", exception);
+        }
+    }
+
     private void compressPDF(PDFContext pdfContext) throws IOException {
         CompressPDFDTO requestDTO = pdfContext.getRequestTypeDTO().getCompressPDFDTO();
         byte[] pdfBytes = pdfContext.getPdfBytes();
