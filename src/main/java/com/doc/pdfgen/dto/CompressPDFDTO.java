@@ -9,4 +9,5 @@ public class CompressPDFDTO {
     Integer maxImageWidth;
     Integer maxImageHeight;
     int compressionQuality;
+    boolean mergeAll = true;
 }

@@ -41,10 +41,12 @@ public class PDFPipeline {
             pdfBytesList.add(executePipeLine(inputFile, requestTypeDTO));
         }
         if (CollectionUtils.size(inputFiles) > 1) {
-            if (requestTypeDTO.getImageToPdfDTO() == null
-                    || !requestTypeDTO.getImageToPdfDTO().isMergeAll()) {
+            boolean mergeRequested = requestTypeDTO.isMergePDF()
+                    || (requestTypeDTO.getImageToPdfDTO() != null
+                    && requestTypeDTO.getImageToPdfDTO().isMergeAll());
+            if (!mergeRequested) {
                 throw new IllegalArgumentException(
-                        "Multiple files require the merge-all option for a single PDF response");
+                        "Multiple files require a merge operation");
             }
             return mergePDFs(pdfBytesList);
         } else {

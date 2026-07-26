@@ -56,6 +56,19 @@ class PDFPipelineTest {
                 pipeline.execute(List.of(image("first.png"), image("second.png")), request));
     }
 
+    @Test
+    void mergesExistingPdfFilesInProvidedOrder() throws Exception {
+        RequestTypeDTO request = new RequestTypeDTO();
+        request.setMergePDF(true);
+
+        byte[] result = pipeline.execute(
+                List.of(pdf("first.pdf", 1), pdf("second.pdf", 2)), request);
+
+        try (PDDocument document = PDDocument.load(result)) {
+            assertEquals(3, document.getNumberOfPages());
+        }
+    }
+
     private static RequestTypeDTO imageRequest(boolean mergeAll, String orientation) {
         ImageToPdfDTO options = new ImageToPdfDTO();
         options.setPageSize("A4");
@@ -74,6 +87,17 @@ class PDFPipelineTest {
         try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             ImageIO.write(image, "png", output);
             return new MockMultipartFile("files", name, "image/png", output.toByteArray());
+        }
+    }
+
+    private static MockMultipartFile pdf(String name, int pages) throws Exception {
+        try (PDDocument document = new PDDocument();
+             ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            for (int index = 0; index < pages; index++) {
+                document.addPage(new org.apache.pdfbox.pdmodel.PDPage());
+            }
+            document.save(output);
+            return new MockMultipartFile("files", name, "application/pdf", output.toByteArray());
         }
     }
 }
