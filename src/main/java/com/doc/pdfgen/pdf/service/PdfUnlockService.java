@@ -20,8 +20,6 @@ public class PdfUnlockService {
                 document.save(output);
                 return new UnlockResult(output.toByteArray(), true);
             }
-        } catch (InvalidPasswordException exception) {
-            throw exception;
         }
     }
 
