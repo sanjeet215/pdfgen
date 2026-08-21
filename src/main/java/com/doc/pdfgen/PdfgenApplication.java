@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = {"com.doc.baseservice", "com.doc.pdfgen"})
-@EntityScan("com.doc.baseservice")
+@EntityScan(basePackages = {"com.doc.baseservice", "com.doc.pdfgen.persistence"})
 @EnableJpaRepositories("com.doc.baseservice.repository")
 public class PdfgenApplication {
 
