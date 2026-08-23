@@ -12,4 +12,9 @@ public class TrackingController {
     public ResponseEntity<Void> pageView() {
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/event")
+    public ResponseEntity<Void> event() {
+        return ResponseEntity.noContent().build();
+    }
 }
