@@ -5,15 +5,18 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Instant;
 
 @Component
 public class RequestTrackingFilter extends OncePerRequestFilter {
- private final RequestEventRepository repository; public RequestTrackingFilter(RequestEventRepository r){repository=r;}
- @Override protected boolean shouldNotFilter(HttpServletRequest r){return r.getRequestURI().equals("/actuator/health");}
+ private final RequestEventRepository repository; private final String statsServiceKey; public RequestTrackingFilter(RequestEventRepository r,@Value("${stats.service-key:}")String statsServiceKey){repository=r;this.statsServiceKey=statsServiceKey;}
+ @Override protected boolean shouldNotFilter(HttpServletRequest r){String path=r.getRequestURI();return path.equals("/actuator/health")||path.equals("/api/stats")||path.startsWith("/api/stats/")||isAdminDevice(r);}
  @Override protected void doFilterInternal(HttpServletRequest req,HttpServletResponse res,FilterChain chain)throws ServletException,IOException{
   long start=System.nanoTime(); try{chain.doFilter(req,res);}finally{try{
    RequestEventEntity e=new RequestEventEntity(); Authentication a=SecurityContextHolder.getContext().getAuthentication();
@@ -32,6 +35,7 @@ public class RequestTrackingFilter extends OncePerRequestFilter {
   }catch(Exception ignored){logger.warn("Unable to record request event",ignored);}}
  }
  private String type(HttpServletRequest r){String p=r.getRequestURI();if(p.contains("/tracking/")){String event=upper(r.getHeader("X-Event-Type"));return event!=null&&event.matches("PAGE_VIEW|FILE_SELECTED|TOOL_USED|DOWNLOAD|PAGE_LEAVE|ACTION")?event:"PAGE_VIEW";}if(p.contains("/workflows/run"))return"WORKFLOW_RUN";if(p.contains("/workflows"))return"WORKFLOW_DEFINITION";if(p.contains("/auth/"))return"AUTH";if(p.contains("/pdf/"))return"PDF_TOOL";return"OTHER";}
+ private boolean isAdminDevice(HttpServletRequest r){String supplied=r.getHeader("X-Admin-Device-Key");return !statsServiceKey.isBlank()&&supplied!=null&&MessageDigest.isEqual(statsServiceKey.getBytes(StandardCharsets.UTF_8),supplied.getBytes(StandardCharsets.UTF_8));}
  private String first(String... values){for(String v:values)if(v!=null&&!v.isBlank())return v.split(",")[0].trim();return"unknown";} private String limit(String v,int n){return v==null?null:v.substring(0,Math.min(n,v.length()));}
  private String firstNullable(String...values){for(String v:values)if(v!=null&&!v.isBlank())return v;return null;}
  private String upper(String v){return v==null||v.isBlank()?null:limit(v.trim().toUpperCase(),20);}
